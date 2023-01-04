@@ -34,6 +34,8 @@ with i1:
         select_title.append(x)
         title_re = x.replace("\\", "/")
     
+    st.text('''🧐 22.12.28 기준 연재 중인 웹툰으로 검색 및 추천되고 있습니다.''')
+    
     ac_button = st.button('웹툰 추천받기!')
 @st.cache
 def load_thumb(url):

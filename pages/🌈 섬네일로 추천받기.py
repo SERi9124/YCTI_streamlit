@@ -284,6 +284,7 @@ def show_thumbs(select_area, page):
         st.write("")
         st.image(Image.fromarray(rep_thumb[idx_list[6 * page + 5]]))
         
+        
     with c1:
         st.write("")
         
@@ -299,7 +300,14 @@ def show_thumbs(select_area, page):
         if toon2: select_title.append(web_title.iloc[idx_list[6 * page + 1]].values[0])
         st.write("")
         st.image(Image.fromarray(rep_thumb[idx_list[6 * page + 1]]))
-
+    
+    global noti_area
+    noti_area = st.empty()
+    n1 = noti_area.container()
+    
+    with n1:
+        st.text('''🧐 22.12.28 기준 연재 중인 웹툰으로 검색 및 추천되고 있습니다.''')
+    
         if page == 0:
             next_button1 = st.button("next", disabled=(toon1 + toon2 + toon3 + toon4 + toon5 + toon6 < 1), key="bt1")
             if next_button1:
@@ -324,18 +332,21 @@ if ~(st.session_state["next_button1"] & st.session_state["next_button2"] & st.se
 
 if st.session_state["next_button1"]:
     idx_list = make_idx()
+    noti_area.empty()
     # select_area = st.empty()
     my_bar.progress(2/3)
     show_thumbs(select_area, 1)
     
 if st.session_state['next_button2']:
     idx_list = make_idx()
+    noti_area.empty()
     # select_area = st.empty()
     my_bar.progress(3/3)
     show_thumbs(select_area, 2)
 
 if st.session_state['finish_button']:
     info_area.empty()
+    noti_area.empty()
     select_area.empty()
     
     user_pick = title_id(select_title)

@@ -29,6 +29,8 @@ def load_thumb(url):
     
     return rep_thumb
 
+thumb_url = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true'
+rep_thumb = load_thumb(thumb_url)
 # st.write(web_title.iloc[0].values[0])
 
 data_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true'

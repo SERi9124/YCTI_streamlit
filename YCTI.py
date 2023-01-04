@@ -62,5 +62,5 @@ with c4:
 st.write("---")
 
 st.subheader("나한테 맞는 웹툰 찾으러 가기")
-st.markdown("[👉🏻 섬네일로 찾기](http://localhost:8501/섬네일로_추천받기)")
-st.markdown("[👉🏻 제목으로 찾기](http://localhost:8501/제목으로_추천받기)")
+st.markdown("[👉🏻 섬네일로 찾기](https://you-can-toon-it.streamlit.app/%EC%84%AC%EB%84%A4%EC%9D%BC%EB%A1%9C_%EC%B6%94%EC%B2%9C%EB%B0%9B%EA%B8%B0)")
+st.markdown("[👉🏻 제목으로 찾기](https://you-can-toon-it.streamlit.app/%EC%A0%9C%EB%AA%A9%EC%9C%BC%EB%A1%9C_%EC%B6%94%EC%B2%9C%EB%B0%9B%EA%B8%B0)")

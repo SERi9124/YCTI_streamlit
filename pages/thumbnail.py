@@ -4,6 +4,8 @@ import numpy as np
 import random
 from glob import glob
 from PIL import Image
+import requests
+import io
 
 st.set_page_config(
     layout="wide")
@@ -18,13 +20,22 @@ st.write("")
 
 
 web_title = pd.read_csv('https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv')
-rep_thumb = np.load('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true', allow_pickle=True)          
+# rep_thumb = np.load('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true', allow_pickle=True)          
+rep_thumb = requests.get('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true')
+rep_thumb.raise_for_status()
+rep_thumb = np.load(io.BytesIO(rep_thumb.content))
 
 # st.write(web_title.iloc[0].values[0])
 
-data_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true'
-label_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true'
+# data_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true'
+data_name = requests.get('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true')
+data_name.raise_for_status()
+data_name = np.load(io.BytesIO(data_name.content))
 
+# label_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true'
+label_name = requests.get('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true')
+label_name.raise_for_status()
+label_name = np.load(io.BytesIO(label_name.content))
 @st.cache
 def load_data(data_name, label_name):    
     data = np.load(data_name, allow_pickle = True)

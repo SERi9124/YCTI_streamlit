@@ -42,6 +42,68 @@ label_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb
 # label_name.raise_for_status()
 # label_name = np.load(io.BytesIO(label_name.content))
 
+# @st.cache(show_spinner = True)
+# def load_data(data_name, label_name):    
+#     # data = np.load(data_name, allow_pickle = True)
+#     data = requests.get(data_name)
+#     data.raise_for_status()
+#     data = np.load(io.BytesIO(data.content))
+    
+#     # np_label = np.load(label_name)
+#     np_label = requests.get(label_name)
+#     np_label.raise_for_status()
+#     np_label = np.load(io.BytesIO(np_label.content))
+    
+#     df = pd.DataFrame(pd.Series(data.tolist()),
+#                             columns=['embedding'])
+#     df['embedding'] = df['embedding'].map(np.asarray)
+#     df['label'] = np_label
+#     return df
+
+# df = load_data(data_name, label_name)
+
+# @st.cache(show_spinner = False)
+# def rank_similarity(df, webtoon_ids, mode='cosine', top=10):    
+#     df_temp = df.copy()
+    
+#     df_user = pd.DataFrame()
+#     for webtoon_id in webtoon_ids:
+#         df_user = pd.concat([
+#             df_user,
+#             df_temp[df_temp['label'] == webtoon_id].sample(3, random_state=42)
+#         ])
+#     user_index = df_user.index
+    
+#     df_user_embeds = df_user['embedding']
+#     df_user_labels = df_user['label']
+#     df_temp.drop(index=user_index, inplace=True)
+    
+#     df_temp['order'] = 0
+#     if mode == 'cosine':
+#         for b in df_user_embeds:
+#             df_temp['order'] += df_temp['embedding'].apply(
+#                 lambda a: np.divide(
+#                     -np.dot(a, b),
+#                     np.linalg.norm(a) * np.linalg.norm(b)
+#                 )
+#             )
+#     elif mode == 'l2-norm':
+#         for b in df_user_embeds:
+#             df_temp['order'] += df_temp['embedding'].apply(
+#                 lambda a: np.linalg.norm((a - b), ord=2))
+#     elif mode == 'l1-norm':
+#         for b in df_user_embeds:
+#             df_temp['order'] += df_temp['embedding'].apply(
+#                 lambda a: np.linalg.norm((a - b), ord=1))
+#     else:
+#         raise ValueError('mode check needed')
+    
+#     df_ret = df_temp.sort_values(by='order')\
+#                     .drop('order', axis=1)\
+#                     .drop_duplicates('label')
+#     df_ret = df_ret[~df_ret['label'].isin(df_user_labels)]
+#     return df_ret.iloc[:top]
+
 @st.cache(show_spinner = True)
 def load_data(data_name, label_name):    
     # data = np.load(data_name, allow_pickle = True)
@@ -54,56 +116,59 @@ def load_data(data_name, label_name):
     np_label.raise_for_status()
     np_label = np.load(io.BytesIO(np_label.content))
     
-    df = pd.DataFrame(pd.Series(data.tolist()),
-                            columns=['embedding'])
-    df['embedding'] = df['embedding'].map(np.asarray)
-    df['label'] = np_label
-    return df
+    # df = pd.DataFrame(pd.Series(data.tolist()),
+    #                         columns=['embedding'])
+    # df['embedding'] = df['embedding'].map(np.asarray)
+    # df['label'] = np_label
+    return data, np_label
 
-df = load_data(data_name, label_name)
+# df = load_data(data_name, label_name)
+embedding, labels = load_data(data_name, label_name)
 
 @st.cache(show_spinner = False)
-def rank_similarity(df, webtoon_ids, mode='cosine', top=10):    
-    df_temp = df.copy()
+def rank_similarity(embedding, labels, webtoon_ids, top = 10):    
     
-    df_user = pd.DataFrame()
-    for webtoon_id in webtoon_ids:
-        df_user = pd.concat([
-            df_user,
-            df_temp[df_temp['label'] == webtoon_id].sample(3, random_state=42)
-        ])
-    user_index = df_user.index
+    # df_temp = 이미지 별 label 정보와 유사도 계산 결과가 담길 데이터프레임 선언
+    df_temp = pd.DataFrame(labels, columns = ['label'])
     
-    df_user_embeds = df_user['embedding']
-    df_user_labels = df_user['label']
-    df_temp.drop(index=user_index, inplace=True)
+    # chosen_index: 선택한 웹툰들에 대해 이미지를 3장씩 골라준 후 인덱스를 담아준다.
+    # 추후 유사도 계산 기준 벡터의 인덱스가 될 것
+    chosen_index = []
+    for webtoon in webtoon_ids:
+        where_label = np.where(labels == webtoon)[0]
+        chosen_index.extend(np.random.choice(where_label, 3, replace = False))
     
-    df_temp['order'] = 0
-    if mode == 'cosine':
-        for b in df_user_embeds:
-            df_temp['order'] += df_temp['embedding'].apply(
-                lambda a: np.divide(
-                    -np.dot(a, b),
-                    np.linalg.norm(a) * np.linalg.norm(b)
-                )
-            )
-    elif mode == 'l2-norm':
-        for b in df_user_embeds:
-            df_temp['order'] += df_temp['embedding'].apply(
-                lambda a: np.linalg.norm((a - b), ord=2))
-    elif mode == 'l1-norm':
-        for b in df_user_embeds:
-            df_temp['order'] += df_temp['embedding'].apply(
-                lambda a: np.linalg.norm((a - b), ord=1))
-    else:
-        raise ValueError('mode check needed')
+    # 유사도 계산 결과의 합을 담을 array 생성
+    result = np.zeros_like(labels, dtype=float)
     
-    df_ret = df_temp.sort_values(by='order')\
-                    .drop('order', axis=1)\
-                    .drop_duplicates('label')
-    df_ret = df_ret[~df_ret['label'].isin(df_user_labels)]
-    return df_ret.iloc[:top]
+    # 유사도 계산
+    for b in chosen_index:
 
+        # 0으로 나누어지는 경우 방지
+        np.seterr(invalid='ignore')
+
+        # cosine similarity 계산, 클수록 좋다 => 음수를 붙였다.
+        # 문제 : 배열이 이차원 배열임 => 계산 시 이차원 배열에서 헹 하나씩을 사용해야한다는 뜻.
+        # 아무리 찾아봐도 반복문밖에 답이 없다.
+        # 속도는 좀 느리겠지만!
+
+        cosine_sim = lambda a : np.divide(
+                -np.dot(a, embedding[b]),
+                np.linalg.norm(a) * np.linalg.norm(embedding[b]))
+
+        sim = np.zeros_like(labels, dtype=float)
+        for i in range(len(embedding)):
+            sim[i] = cosine_sim(embedding[i])
+
+        result += sim
+    
+    df_temp['order'] = result
+    df_temp = df_temp.sort_values(by='order')\
+                    .drop_duplicates('label')
+    #                     .drop('order', axis=1)\
+    df_temp = df_temp[~df_temp['label'].isin(webtoon_ids)]
+    
+    return df_temp.iloc[:10]
 
 def show_recommendations(df, webtoon_ids, rep_thumb):
     

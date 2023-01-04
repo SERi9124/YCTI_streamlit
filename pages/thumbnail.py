@@ -332,5 +332,5 @@ if st.session_state['finish_button']:
     user_pick = title_id(select_title)
 
     with st.spinner(f'{select_title} 와 그림체가 유사한 웹툰을 검색중입니다.'): 
-        df_rec = rank_similarity(df,user_pick,mode='l2-norm',top=10)
+        df_rec = rank_similarity(embedding, labels, user_pick, top = 10)
         show_recommendations(df_rec, user_pick, rep_thumb)

@@ -332,18 +332,21 @@ if ~(st.session_state["next_button1"] & st.session_state["next_button2"] & st.se
 
 if st.session_state["next_button1"]:
     idx_list = make_idx()
+    noti_area.empty()
     # select_area = st.empty()
     my_bar.progress(2/3)
     show_thumbs(select_area, 1)
     
 if st.session_state['next_button2']:
     idx_list = make_idx()
+    noti_area.empty()
     # select_area = st.empty()
     my_bar.progress(3/3)
     show_thumbs(select_area, 2)
 
 if st.session_state['finish_button']:
     info_area.empty()
+    noti_area.empty()
     select_area.empty()
     
     user_pick = title_id(select_title)

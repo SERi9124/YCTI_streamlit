@@ -47,8 +47,7 @@ c1, c2, c3, c4, c5 = st.columns([2, 4, 2, 4, 2])
 with c2:
     # image = Image.open("https://github.com/SERi9124/YCTI_streamlit/blob/main/img/naver.png?raw=true")
     image = "https://github.com/SERi9124/YCTI_streamlit/blob/main/img/naver.png?raw=true"
-
-    image = image.resize((512, 512))
+    # image = image.resize((512, 512))
     st.image(image)
     st.markdown("[네이버 웹툰](https://comic.naver.com/webtoon/weekday)")
 
@@ -56,7 +55,7 @@ with c2:
 with c4:
     # image = Image.open("https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/img/kakao.png?raw=true")
     image = "https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/img/kakao.png?raw=true"
-    image = image.resize((512, 512))
+    # image = image.resize((512, 512))
     st.image(image)
     st.markdown("[카카오 웹툰](https://webtoon.kakao.com/original-webtoon)")
 

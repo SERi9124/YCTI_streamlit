@@ -44,8 +44,16 @@ label_name = np.load(io.BytesIO(label_name.content))
 
 @st.cache(show_spinner = True)
 def load_data(data_name, label_name):    
-    data = np.load(data_name, allow_pickle = True)
-    np_label = np.load(label_name)
+    # data = np.load(data_name, allow_pickle = True)
+    data = requests.get(data_name)
+    data.raise_for_status()
+    data = np.load(io.BytesIO(data.content))
+    
+    # np_label = np.load(label_name)
+    np_label = requests.get(label_name)
+    np_label.raise_for_status()
+    np_label = np.load(io.BytesIO(np_label.content))
+    
     df = pd.DataFrame(pd.Series(data.tolist()),
                             columns=['embedding'])
     df['embedding'] = df['embedding'].map(np.asarray)

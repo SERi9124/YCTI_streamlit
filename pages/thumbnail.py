@@ -235,7 +235,7 @@ c1, c2, c3 = select_area.columns([3, 3, 3])
 
 
 # 페이지마다 썸네일 보여주는 함수
-@st.cache
+# @st.cache
 def show_thumbs(select_area, page):
 
     select_area.empty() # 구역 설정

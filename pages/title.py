@@ -268,6 +268,6 @@ if st.button('웹툰 추천받기!'):
     # df_rec = rank_similarity(df,user_pick,mode='l2-norm',top=10)
 
     with st.spinner('그림체가 유사한 웹툰을 검색중입니다.'): 
-        df_rec = rank_similarity(df,user_pick,mode='l2-norm',top=10)
+        df_rec = rank_similarity(embedding, labels, user_pick)
         show_recommendations(df_rec, user_pick, rep_thumb)
         st.markdown('---')

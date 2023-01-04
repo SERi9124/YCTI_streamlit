@@ -12,8 +12,8 @@ st.markdown("※ __모델 로드에 약 30초 소요__ 됩니다.")
 st.write("")
 st.write("")
 
-web_title = pd.read_csv('/home/work/WEBTOON/test_practice/woo/thumb_img/toon_list.csv')
-rep_thumb = np.load('/home/work/WEBTOON/test_practice/streamlit/data/cropped_img.npy', allow_pickle=True)
+web_title = pd.read_csv('https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv')
+rep_thumb = np.load('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true', allow_pickle=True)
 st.markdown("🧞 제목을 **:green[선택(입력)]** 해주세요 🧞‍♂️🧞‍♀️")
 options = st.multiselect("※ 최대 **:red[3개의 웹툰을 선택]** 할 수 있습니다. ", web_title, max_selections=3)
 
@@ -25,8 +25,8 @@ for x in options:
     st.write(x, '을(를) 선택하셨습니다.')
 
 
-data_name = '/home/work/WEBTOON/test_practice/gt/np_embeddings_efficientnet_v2.npy'
-label_name = '/home/work/WEBTOON/test_practice/gt/np_labels_efficientnet_v2.npy'
+data_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true'
+label_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true'
 
 @st.cache(show_spinner = True)
 def load_data(data_name, label_name):    
@@ -85,8 +85,8 @@ def rank_similarity(df, webtoon_ids, mode='cosine', top=10):
 
 def show_recommendations(df, webtoon_ids, rep_thumb):
     
-    toon_list = pd.read_csv("/home/work/WEBTOON/test_practice/woo/thumb_img/toon_list.csv").T
-    webtoon = pd.read_csv("/home/work/WEBTOON/test_practice/seri/webtoon.csv")
+    toon_list = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv").T
+    webtoon = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/webtoon.csv")
 
     wt_name = []
     wt_titleId = []

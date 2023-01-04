@@ -4,9 +4,6 @@ import numpy as np
 import random
 from glob import glob
 from PIL import Image
-import koreanize_matplotlib
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 st.set_page_config(
     layout="wide")
@@ -20,13 +17,13 @@ st.write("")
 st.write("")
 
 
-web_title = pd.read_csv('data/toon_list.csv')
-rep_thumb = np.load('data/cropped_img.npy', allow_pickle=True)          
+web_title = pd.read_csv('https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv')
+rep_thumb = np.load('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true', allow_pickle=True)          
 
 # st.write(web_title.iloc[0].values[0])
 
-data_name = 'data/np_embeddings_efficientnet_v2.npy'
-label_name = 'data/np_labels_efficientnet_v2.npy'
+data_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true'
+label_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true'
 
 @st.cache
 def load_data(data_name, label_name):    
@@ -84,8 +81,8 @@ def rank_similarity(df, webtoon_ids, mode='cosine', top=10):
 
 def show_recommendations(df, webtoon_ids, rep_thumb):
     
-    toon_list = pd.read_csv("data/toon_list.csv").T
-    webtoon = pd.read_csv("data/webtoon.csv")
+    toon_list = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv").T
+    webtoon = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/webtoon.csv")
 
     wt_name = []
     wt_titleId = []

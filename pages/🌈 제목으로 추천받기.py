@@ -13,6 +13,9 @@ st.set_page_config(
 
 # 페이지 제목
 st.title(":revolving_hearts: 제목으로 확인하는 내 취향")
+st.markdown("※ __모델 로드에 약 30초 소요__ 됩니다.")
+st.write("")
+st.write("")
 
 web_title = pd.read_csv('data/toon_list.csv')
 @st.cache

@@ -4,18 +4,37 @@ import numpy as np
 import requests
 import io
 
+
 st.set_page_config(
-    layout="wide"
+    layout="wide",
+    page_icon="🧚‍♀️",
+    page_title="제목으로 추천받기"
 )
 
 # 페이지 제목
 st.title(":revolving_hearts: 제목으로 확인하는 내 취향")
-st.markdown("※ __모델 로드에 약 30초 소요__ 됩니다.")
-st.write("")
-st.write("")
 
-web_title = pd.read_csv('https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv')
-# rep_thumb = np.load('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true', allow_pickle=True)
+
+web_title = pd.read_csv('data/toon_list.csv')
+
+info_area = st.empty()
+i1 = info_area.container()
+with i1:
+    st.markdown("※ __모델 로드에 약 30초 소요__ 됩니다.")
+    st.write("")
+    st.write("")
+
+
+    st.markdown("🧞 제목을 **:green[선택(입력)]** 해주세요 🧞‍♂️🧞‍♀️")
+    options = st.multiselect("※ 최대 **:red[3개의 웹툰을 선택]** 할 수 있습니다. ", web_title, max_selections=3)
+
+    select_title = []
+
+    for x in options:
+        select_title.append(x)
+        title_re = x.replace("\\", "/")
+    
+    ac_button = st.button('웹툰 추천받기!')
 @st.cache
 def load_thumb(url):
     rep_thumb = requests.get(url)
@@ -27,88 +46,8 @@ def load_thumb(url):
 thumb_url = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true'
 rep_thumb = load_thumb(thumb_url)
 
-st.markdown("🧞 제목을 **:green[선택(입력)]** 해주세요 🧞‍♂️🧞‍♀️")
-options = st.multiselect("※ 최대 **:red[3개의 웹툰을 선택]** 할 수 있습니다. ", web_title, max_selections=3)
-
-select_title = []
-
-for x in options:
-    select_title.append(x)
-    title_re = x.replace("\\", "/")
-    st.write(x, '을(를) 선택하셨습니다.')
-
-
 data_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true'
-# data_name = requests.get('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true')
-# data_name.raise_for_status()
-# data_name = np.load(io.BytesIO(data_name.content))
-
 label_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true'
-# label_name = requests.get('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true')
-# label_name.raise_for_status()
-# label_name = np.load(io.BytesIO(label_name.content))
-
-# @st.cache(show_spinner = True)
-# def load_data(data_name, label_name):    
-#     # data = np.load(data_name, allow_pickle = True)
-#     data = requests.get(data_name)
-#     data.raise_for_status()
-#     data = np.load(io.BytesIO(data.content))
-    
-#     # np_label = np.load(label_name)
-#     np_label = requests.get(label_name)
-#     np_label.raise_for_status()
-#     np_label = np.load(io.BytesIO(np_label.content))
-    
-#     df = pd.DataFrame(pd.Series(data.tolist()),
-#                             columns=['embedding'])
-#     df['embedding'] = df['embedding'].map(np.asarray)
-#     df['label'] = np_label
-#     return df
-
-# df = load_data(data_name, label_name)
-
-# @st.cache(show_spinner = False)
-# def rank_similarity(df, webtoon_ids, mode='cosine', top=10):    
-#     df_temp = df.copy()
-    
-#     df_user = pd.DataFrame()
-#     for webtoon_id in webtoon_ids:
-#         df_user = pd.concat([
-#             df_user,
-#             df_temp[df_temp['label'] == webtoon_id].sample(3, random_state=42)
-#         ])
-#     user_index = df_user.index
-    
-#     df_user_embeds = df_user['embedding']
-#     df_user_labels = df_user['label']
-#     df_temp.drop(index=user_index, inplace=True)
-    
-#     df_temp['order'] = 0
-#     if mode == 'cosine':
-#         for b in df_user_embeds:
-#             df_temp['order'] += df_temp['embedding'].apply(
-#                 lambda a: np.divide(
-#                     -np.dot(a, b),
-#                     np.linalg.norm(a) * np.linalg.norm(b)
-#                 )
-#             )
-#     elif mode == 'l2-norm':
-#         for b in df_user_embeds:
-#             df_temp['order'] += df_temp['embedding'].apply(
-#                 lambda a: np.linalg.norm((a - b), ord=2))
-#     elif mode == 'l1-norm':
-#         for b in df_user_embeds:
-#             df_temp['order'] += df_temp['embedding'].apply(
-#                 lambda a: np.linalg.norm((a - b), ord=1))
-#     else:
-#         raise ValueError('mode check needed')
-    
-#     df_ret = df_temp.sort_values(by='order')\
-#                     .drop('order', axis=1)\
-#                     .drop_duplicates('label')
-#     df_ret = df_ret[~df_ret['label'].isin(df_user_labels)]
-#     return df_ret.iloc[:top]
 
 @st.cache(show_spinner = True)
 def load_data(data_name, label_name):    
@@ -176,10 +115,11 @@ def rank_similarity(embedding, labels, webtoon_ids, top = 10):
     
     return df_temp.iloc[:10]
 
+
 def show_recommendations(df, webtoon_ids, rep_thumb):
     
-    toon_list = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv").T
-    webtoon = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/webtoon.csv")
+    toon_list = pd.read_csv("data/toon_list.csv").T
+    webtoon = pd.read_csv("data/webtoon.csv")
 
     wt_name = []
     wt_titleId = []
@@ -194,8 +134,14 @@ def show_recommendations(df, webtoon_ids, rep_thumb):
         # st.write(webtoon[webtoon["title"].isin(toon_list[label])]["titleId"].values)
         url.append(webtoon[webtoon["title"].isin(toon_list[label])]["url"].values[0])
     
+    st.balloons()
+    
     st.markdown('---')
-    st.header("🌞🌞 추천하는 웹툰 🌞🌞")
+    col1, col2 = st.columns([9, 1])
+    with col1:
+        st.header("🌞🌞 추천하는 웹툰 🌞🌞")
+    with col2:
+        re_button = st.button("다시 추천받기")
     st.write("")
 
     col1, col2, col3, col4, col5 = st.columns([1, 3, 0.5, 3, 1])
@@ -258,9 +204,12 @@ def show_recommendations(df, webtoon_ids, rep_thumb):
         st.markdown(f'[보러가기 :dash::dash:]({url[4]})')
         # st.write("")
 
-    return None
+    if re_button:
+        info_area.empty()
+        st.experimental_memo.clear()
+        st.experimental_rerun()
 
-@st.cache(show_spinner = False)
+@st.experimental_memo(show_spinner = False)
 def title_id(select_title):
     user_pick = []
     for i in select_title:
@@ -269,11 +218,17 @@ def title_id(select_title):
 
 # st.markdown('---')
 
-if st.button('웹툰 추천받기!'):
+if ac_button:
+    info_area.empty()
     user_pick = title_id(select_title)
     # df_rec = rank_similarity(df,user_pick,mode='l2-norm',top=10)
 
-    with st.spinner('그림체가 유사한 웹툰을 검색중입니다.'): 
+    with st.spinner(f'**{", ".join(select_title)}** 와 그림체가 유사한 웹툰을 검색중입니다.'):
+        wait_area = st.empty()
+        p1 = wait_area.container()
+        with p1:
+            st.image("img/plz_wait.jpg")
         df_rec = rank_similarity(embedding, labels, user_pick)
+        wait_area.empty()
         show_recommendations(df_rec, user_pick, rep_thumb)
         st.markdown('---')

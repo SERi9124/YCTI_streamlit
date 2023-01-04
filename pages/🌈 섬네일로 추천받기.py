@@ -2,25 +2,25 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import random
-from glob import glob
 from PIL import Image
 import requests
 import io
 
-st.set_page_config(
-    layout="wide")
 
+st.set_page_config(
+    layout="wide",
+    page_icon="🧚‍♀️",
+    page_title="섬네일로 추천받기")
 
 
 # 페이지 제목
-st.title("💘 썸네일로 확인하는 내 취향")
+st.title("💘 섬네일로 확인하는 내 취향")
 
 st.write("")
 st.write("")
 
+web_title = pd.read_csv('data/toon_list.csv')
 
-web_title = pd.read_csv('https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv')
-# rep_thumb = np.load('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true', allow_pickle=True)          
 @st.cache
 def load_thumb(url):
     rep_thumb = requests.get(url)
@@ -111,8 +111,8 @@ def rank_similarity(embedding, labels, webtoon_ids, top = 10):
 
 def show_recommendations(df, webtoon_ids, rep_thumb):
     
-    toon_list = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv").T
-    webtoon = pd.read_csv("https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/webtoon.csv")
+    toon_list = pd.read_csv("data/toon_list.csv").T
+    webtoon = pd.read_csv("data/webtoon.csv")
 
     wt_name = []
     wt_titleId = []
@@ -127,11 +127,14 @@ def show_recommendations(df, webtoon_ids, rep_thumb):
         # st.write(webtoon[webtoon["title"].isin(toon_list[label])]["titleId"].values)
         url.append(webtoon[webtoon["title"].isin(toon_list[label])]["url"].values[0])
     
+    st.balloons()
+    
     st.markdown('---')
-    # col1, col2 = st.columns([5, 5])
-    # with col1:
-    st.header("🌞🌞 추천하는 웹툰 🌞🌞")
-        # re_button = st.button("") 
+    col1, col2 = st.columns([9, 1])
+    with col1:
+        st.header("🌞🌞 추천하는 웹툰 🌞🌞")
+    with col2:
+        re_button = st.button("다시 추천받기") 
     st.write("")
 
     col1, col2, col3, col4, col5 = st.columns([1, 3, 0.5, 3, 1])
@@ -190,8 +193,15 @@ def show_recommendations(df, webtoon_ids, rep_thumb):
         st.write(':face_with_monocle: **장르** : ',webtoon.loc[webtoon["titleId"] == wt_titleId[4]]["genre"].values[0])
         st.write(':calendar: **연재요일** : ',webtoon.loc[webtoon["titleId"] == wt_titleId[4]]["serial_day"].values[0])
         st.markdown(f'[**보러가기** :dash::dash:]({url[4]})')
+    
+    if re_button:
+        st.experimental_memo.clear()
+        st.session_state["next_button1"] = False
+        st.session_state["next_button2"] = False
+        st.session_state["finish_button"] = False
+        st.experimental_rerun()
 
-@st.cache
+@st.experimental_memo
 def title_id(select_title):
     user_pick = []
     for i in select_title:
@@ -206,8 +216,6 @@ if "next_button2" not in st.session_state:
     st.session_state["next_button2"] = False
 if "finish_button" not in st.session_state:
     st.session_state["finish_button"] = False
-if "clear_button" not in st.session_state:
-    st.session_state["clear_button"] = False
 
 
 # 랜덤으로 웹툰 선택해주는 함수
@@ -226,7 +234,8 @@ info_area = st.empty()
 i1 = info_area.container()
 
 with i1:
-    st.text("⭐ 최소 하나는 필수로 선택해주세요.")
+    st.text('''⭐ 6개씩 총 18장의 이미지가 주어집니다.
+⭐ 한 페이지에 최소한 한개를 선택 후 좌측 하단의 버튼을 눌러 다음 단계로 이동해주세요.''')
     my_bar = st.progress(1/3) # 진행바
 
 select_area = st.empty() # 구역 설정
@@ -235,7 +244,7 @@ c1, c2, c3 = select_area.columns([3, 3, 3])
 
 
 # 페이지마다 썸네일 보여주는 함수
-# @st.cache
+
 def show_thumbs(select_area, page):
 
     select_area.empty() # 구역 설정
@@ -331,6 +340,14 @@ if st.session_state['finish_button']:
     
     user_pick = title_id(select_title)
 
-    with st.spinner(f'{select_title} 와 그림체가 유사한 웹툰을 검색중입니다.'): 
+    # plz_wait = st.image("img/plz_wait.jpg")
+    
+    with st.spinner(f'**{", ".join(select_title)}** 와 그림체가 유사한 웹툰을 검색중입니다.'):
+        wait_area = st.empty()
+        p1 = wait_area.container()
+        with p1:
+            st.image("img/plz_wait.jpg")
         df_rec = rank_similarity(embedding, labels, user_pick, top = 10)
+        wait_area.empty()
         show_recommendations(df_rec, user_pick, rep_thumb)
+        st.markdown("---")

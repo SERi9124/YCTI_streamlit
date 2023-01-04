@@ -16,17 +16,6 @@ st.title(":revolving_hearts: 제목으로 확인하는 내 취향")
 
 
 web_title = pd.read_csv('data/toon_list.csv')
-@st.cache
-def load_thumb(url):
-    rep_thumb = requests.get(url)
-    rep_thumb.raise_for_status()
-    rep_thumb = np.load(io.BytesIO(rep_thumb.content))
-    
-    return rep_thumb
-
-thumb_url = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true'
-rep_thumb = load_thumb(thumb_url)
-
 
 info_area = st.empty()
 i1 = info_area.container()
@@ -46,7 +35,16 @@ with i1:
         title_re = x.replace("\\", "/")
     
     ac_button = st.button('웹툰 추천받기!')
+@st.cache
+def load_thumb(url):
+    rep_thumb = requests.get(url)
+    rep_thumb.raise_for_status()
+    rep_thumb = np.load(io.BytesIO(rep_thumb.content))
+    
+    return rep_thumb
 
+thumb_url = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true'
+rep_thumb = load_thumb(thumb_url)
 
 data_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_embeddings_efficientnet_v2.npy?raw=true'
 label_name = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/np_labels_efficientnet_v2.npy?raw=true'

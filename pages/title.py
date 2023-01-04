@@ -16,10 +16,16 @@ st.write("")
 
 web_title = pd.read_csv('https://raw.githubusercontent.com/SERi9124/YCTI_streamlit/main/data/toon_list.csv')
 # rep_thumb = np.load('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true', allow_pickle=True)
-rep_thumb = requests.get('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true')
-rep_thumb.raise_for_status()
-rep_thumb = np.load(io.BytesIO(rep_thumb.content))
-##
+@st.cache
+def load_thumb(url):
+    rep_thumb = requests.get('https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true')
+    rep_thumb.raise_for_status()
+    rep_thumb = np.load(io.BytesIO(rep_thumb.content))
+    
+    return rep_thumb
+
+thumb_url = 'https://github.com/SERi9124/YCTI_streamlit/blob/4dcccfd048e6971afb4878906456dd3528a3b719/data/cropped_img.npy?raw=true'
+rep_thumb = load_thumb(thumb_url)
 
 st.markdown("🧞 제목을 **:green[선택(입력)]** 해주세요 🧞‍♂️🧞‍♀️")
 options = st.multiselect("※ 최대 **:red[3개의 웹툰을 선택]** 할 수 있습니다. ", web_title, max_selections=3)

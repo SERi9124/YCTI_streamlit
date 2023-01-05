@@ -17,7 +17,6 @@ with c1:
     st.header("💪 You can toon it ✨")
     st.write("**🦁 멋쟁이 사자처럼 AI SCHOOL 7기**")
 
-    st.markdown("박경택, 박예령, 손진선, 임종우, 정세리")
     st.markdown('''|박경택|박예령|손진선|임종우|정세리|
 |:---:|:---:|:---:|:---:|:---:|
 |[![](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=White)](https://github.com/cryptnomy)|[![](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=White)](https://github.com/hi-Heidi)|[![](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=White)](https://github.com/Son-jinseon)|[![](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=White)](https://github.com/imngooh)|[![](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=White)](https://github.com/SERi9124)|''')
